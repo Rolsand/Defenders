@@ -33,6 +33,7 @@ namespace DefendersGame
             this.tmrGame = new System.Windows.Forms.Timer(this.components);
             this.pgrHealth = new System.Windows.Forms.ProgressBar();
             this.picSpaceShip = new System.Windows.Forms.PictureBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.picSpaceShip)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,11 +66,19 @@ namespace DefendersGame
             this.picSpaceShip.Tag = "Player";
             this.picSpaceShip.UseWaitCursor = true;
             // 
+            // panel1
+            // 
+            this.panel1.Location = new System.Drawing.Point(12, 41);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(720, 515);
+            this.panel1.TabIndex = 2;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 761);
+            this.ClientSize = new System.Drawing.Size(744, 586);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.pgrHealth);
             this.Controls.Add(this.picSpaceShip);
             this.Name = "Form1";
@@ -88,6 +97,7 @@ namespace DefendersGame
         private System.Windows.Forms.PictureBox picSpaceShip;
         private System.Windows.Forms.Timer tmrGame;
         private System.Windows.Forms.ProgressBar pgrHealth;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

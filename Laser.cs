@@ -20,7 +20,7 @@ namespace  DefendersGame
         public int LaserLeft;
         public Image LaserImage;
 
-        public void MakeLaser(Form form)
+        public void MakeLaser(Panel form)
         {
             laser.Size = new System.Drawing.Size(10, 10);
             laser.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -59,9 +59,18 @@ namespace  DefendersGame
                 laser = null;
             }
         }
-        
-      
 
-        
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // Laser
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.ClientSize = new System.Drawing.Size(784, 661);
+            this.Name = "Laser";
+            this.ResumeLayout(false);
+
+        }
     }
 }

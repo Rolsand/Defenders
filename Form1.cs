@@ -13,11 +13,12 @@ namespace DefendersGame
 {
     public partial class Form1 : Form
     {
-        List<PictureBox> EnemyList = new List<PictureBox>();
-        List<PictureBox> PowerUps = new List<PictureBox>();
+        List<LanderState> EnemyList = new List<LanderState>();
+
+
         float Speed;
         int Level = 1;
-        Vector Position, Velocity;
+
         enum ShipMovement
         {
             None,
@@ -26,24 +27,23 @@ namespace DefendersGame
             Left,
             Right,
         }
+
         string Face = "Right";
         int Movementspeed = 12;
 
         ShipMovement Ship = ShipMovement.None;
+
         public Form1()
         {
-
             InitializeComponent();
 
 
             pgrHealth.Maximum = 100;
             pgrHealth.Value = 100;
-            MakeLander();
-       
-
-            this.Controls.Add(picSpaceShip);
+            SpawnRate();
 
 
+            this.panel1.Controls.Add(picSpaceShip);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -54,8 +54,6 @@ namespace DefendersGame
             if (e.KeyCode == Keys.Up)
             {
                 Ship = ShipMovement.Up;
-
-
             }
             else if (e.KeyCode == Keys.Down)
             {
@@ -72,126 +70,92 @@ namespace DefendersGame
                 Ship = ShipMovement.Right;
                 picSpaceShip.Image = Resource1.DefenderShipRight;
                 Face = "Right";
-
-
             }
+
             if (e.KeyCode == Keys.Space)
                 NewLaser(Face);
-           if(e.KeyCode == Keys.Tab)
+            if (e.KeyCode == Keys.Tab)
             {
-                MakeLander();
-                
+                SpawnRate();
             }
-
-            
-            
-
-
-
         }
+
         private void StartGame()
         {
-
-
-
-
-
-
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-
-
         }
 
 
         private void tmrGame_Tick(object sender, EventArgs e)
         {
-          
-          
             PlayerMovement();
 
             // Collision check
 
-            foreach (Control X in this.Controls)
+            foreach (Control X in this.panel1.Controls)
             {
                 if (X is PictureBox && X.Tag == "Lander")
-                {      if (((PictureBox)X).Bounds.IntersectsWith(picSpaceShip.Bounds))
-                    {
-                        pgrHealth.Value -= 1;
-                        this.Controls.Remove(X);
-                    }
-                    else if (pgrHealth.Value <= 0)
+                {
+                    if (pgrHealth.Value <= 0)
                     {
                         tmrGame.Enabled = false;
                     }
+                   else if (((PictureBox)X).Bounds.IntersectsWith(picSpaceShip.Bounds))
+                    {
+                        pgrHealth.Value -= 10;
+
+                        MakeLander();
+                        this.panel1.Controls.Remove(X);
+                    }
+                   
                 }
 
 
-                foreach (Control k in this.Controls)
+                foreach (Control k in this.panel1.Controls)
                 {
-
                     if ((k is PictureBox && (string)k.Tag == "Laser") && (X is PictureBox && (string)X.Tag == "Lander"))
                     {
                         if (k.Bounds.IntersectsWith(X.Bounds))
                         {
-                         
-                            this.Controls.Remove(X);
+                            this.panel1.Controls.Remove(X);
                             X.Dispose();
                             MakeLander();
                         }
-
                     }
                 }
-
-
-               
-               
-            
-
-
-        }
-
-           
-
+            }
 
 
             //Move Lander
-            foreach (Control x in EnemyList)
+            foreach (LanderState landerState in EnemyList)
             {
+                var x = landerState.LanderImage;
                 if (x is PictureBox && x.Tag == "Lander")
                 {
-
-                    if (x.Top <= 0 || x.Bottom >= ClientSize.Height)
+                    if (x.Top <= 0 || x.Bottom >= panel1.ClientSize.Height)
                     {
-                       
-                        Velocity.Y = -1 *Velocity.Y;
-                      
+                        landerState.SetVelocityY(-1 * landerState.Velocity.Y);
                     }
-                   else if(x.Left <= 0 || x.Left >= ClientSize.Width)
+                    else if (x.Left <= 0 || x.Left >= panel1.ClientSize.Width - x.Width)
                     {
-                        Velocity.X = -Velocity.X;
-                      
+                        landerState.SetVelocityX(-landerState.Velocity.X);
                     }
 
                     //MOVE THE BALL
-                 
+
                     //Set ball poostion 
                     //code to move paddles 
-                    
-                
-                    Random Random = new Random();
-                   //x.Top -= Random.Next(0,5);
-                // x.Left += Random.Next(0, 5);
 
 
+                    landerState.Position = new Vector(x.Left, x.Top) + landerState.Velocity;
 
+                    x.Top = (int)landerState.Position.Y;
+                    x.Left = (int)landerState.Position.X;
                 }
-
-
             }
-                      
         }
 
         private void Form1_KeyUp_1(object sender, KeyEventArgs e)
@@ -204,9 +168,6 @@ namespace DefendersGame
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-
-
         }
 
         private void PlayerMovement()
@@ -221,12 +182,12 @@ namespace DefendersGame
                 picSpaceShip.Left += Movementspeed;
             }
             //If bottom of the ship is greater than Client Height then move up
-            else if (picSpaceShip.Bottom >= ClientSize.Height)
+            else if (picSpaceShip.Bottom >= panel1.Height)
             {
                 picSpaceShip.Top -= Movementspeed;
             }
             // If ship is greater than client width then move left.
-            else if (picSpaceShip.Right >= ClientSize.Width)
+            else if (picSpaceShip.Right >= panel1.Width)
             {
                 picSpaceShip.Left -= Movementspeed;
             }
@@ -241,7 +202,6 @@ namespace DefendersGame
                 picSpaceShip.Left += Movementspeed;
             else if (Ship == ShipMovement.Left)
                 picSpaceShip.Left -= Movementspeed;
-
         }
 
         public void NewLaser(string Direction)
@@ -250,37 +210,38 @@ namespace DefendersGame
             FireLaser.Direction = Direction;
             FireLaser.LaserLeft = picSpaceShip.Left + (picSpaceShip.Width / 2);
             FireLaser.LaserTop = picSpaceShip.Top + (picSpaceShip.Height / 2);
-          
-            FireLaser.LaserImage = Resource1.Laser;
-            FireLaser.MakeLaser(this);
 
+            FireLaser.LaserImage = Resource1.Laser;
+            FireLaser.MakeLaser(panel1);
+           
         }
 
         public void MakeLander()
         {
             Random RandomSpawn = new Random();
             PictureBox Lander = new PictureBox();
-            EnemyList.Add(Lander);
+            LanderState landerState = new LanderState(Lander);
+            EnemyList.Add(landerState);
             Lander.Tag = "Lander";
             Lander.Image = Resource1.Lander;
+            Lander.BorderStyle = BorderStyle.FixedSingle;
             Lander.Size = new System.Drawing.Size(30, 27);
             Lander.SizeMode = PictureBoxSizeMode.StretchImage;
-            Lander.Left = RandomSpawn.Next(0, 800);
-            Lander.Top = RandomSpawn.Next(0, 800);
-            this.Controls.Add(Lander);
+
+            Lander.Left = RandomSpawn.Next(0, panel1.Width - Lander.Width);
+            Lander.Top = RandomSpawn.Next(50, panel1.Height - Lander.Height);
+            this.panel1.Controls.Add(Lander);
             Lander.BringToFront();
 
 
-            Speed = 3;
+            Speed = 6;
 
-         
 
-            Position = new Vector(Lander.Width/2, Lander.Height/2);
+            landerState.Position = new Vector(Lander.Width / 2, Lander.Height / 2);
             Double Angle = FindRandomAngle();
-            Velocity = new Vector((double)(Speed * Math.Cos(Angle)), (double)(Speed * Math.Sin(Angle)));
-
-
+            landerState.Velocity = new Vector((double)(Speed * Math.Cos(Angle)), (double)(Speed * Math.Sin(Angle)));
         }
+
         public Double FindRandomAngle()
         {
             Random RandomAngle = new Random();
@@ -290,29 +251,26 @@ namespace DefendersGame
             {
                 r = RandomAngle.Next(1, 8);
             }
+
             double Angle = r * 45 * Math.PI / 100;
             return Angle;
-
         }
 
 
-
-
-        public void  SpawnRate()
+        public void SpawnRate()
         {
-            foreach (PictureBox i in EnemyList)
+           // foreach (LanderState i in EnemyList)
             {
-            this.Controls.Remove(i);
-                
+                //this.panel1.Controls.Remove(i.LanderImage);
             }
 
-           EnemyList.Clear();
-              
-            for(int i=0; i<3;i++)
-                   MakeLander();
+           // EnemyList.Clear();
+
+            for (int i = 0; i < 3; i++)
+            {
+                MakeLander();
+            }
+                
         }
-
-
-     
     }
 }

@@ -9,33 +9,35 @@ using System.Windows.Forms;
 
 namespace  DefendersGame
 {
-    class Laser:Form1
+    class Laser:Game
     {
+        
 
-        public string Direction;
-        private int LaserSpeed = 20;
+       public string Direction;
+       private int LaserSpeed = 20;
        private PictureBox laser = new PictureBox();
         private Timer LaserTimer = new Timer();
         public int LaserTop;
         public int LaserLeft;
+        
         public Image LaserImage;
 
-        public void MakeLaser(Panel form)
+        public void MakeLaser(Panel panel)
         {
-            laser.Size = new System.Drawing.Size(10, 10);
+            laser.Size = new System.Drawing.Size(20, 10);
             laser.SizeMode = PictureBoxSizeMode.StretchImage;
             laser.Tag = "Laser";
             laser.Image = LaserImage;
             laser.Top = LaserTop;
             laser.Left =LaserLeft;
+                     
             laser.BringToFront();
-            form.Controls.Add(laser);
+            panel.Controls.Add(laser);
 
             LaserTimer.Interval = LaserSpeed;
             LaserTimer.Tick += new EventHandler(LaserTimerEvent);
             LaserTimer.Start();
-
-           
+          
          
 
         }
@@ -50,13 +52,17 @@ namespace  DefendersGame
             {
                 laser.Left -= LaserSpeed;
             }
-          if (laser.Left<0||laser.Left>ClientSize.Width||laser.Top<0||laser.Top>ClientSize.Width)
+          if (laser.Left<0||laser.Right>ClientSize.Width)
             {
+               
                 LaserTimer.Stop();
                 LaserTimer.Dispose();
                 laser.Dispose();
                 LaserTimer = null;
                 laser = null;
+
+               
+
             }
         }
 
@@ -67,9 +73,10 @@ namespace  DefendersGame
             // Laser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(784, 661);
+            this.ClientSize = new System.Drawing.Size(1165, 586);
             this.Name = "Laser";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
     }

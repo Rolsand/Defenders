@@ -6,9 +6,15 @@ namespace DefendersGame
     public class LanderState
     {
         public PictureBox LanderImage { get; set; }
+        public PictureBox SwarmerImage { get; set; }
         public Vector Position { get; set; }
         private Vector mvelocity;
-        public Vector Velocity { get => mvelocity; set => mvelocity = value; } // same as {get {return mvelocity;} set{return mvelocity;}
+        public Vector Velocity  
+        
+        {
+        get {return mvelocity;}
+       set{mvelocity= value;}
+}
 
         public LanderState(PictureBox landerImage)
         {

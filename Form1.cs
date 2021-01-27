@@ -8,17 +8,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows;
+using System.Media;
+using System.Numerics;
+
 
 namespace DefendersGame
 {
-    public partial class Form1 : Form
+    public partial class Game : Form
     {
         List<LanderState> EnemyList = new List<LanderState>();
+        PictureBox[] Humans = new PictureBox[10];
+        SoundPlayer GameOver = new SoundPlayer(Resource1.GameOver);
+        SoundPlayer StartMusic = new SoundPlayer(Resource1.Start);
+        SoundPlayer LaserSound = new SoundPlayer(Resource1.LaserSound);
+        int Hitpoints;
+        bool spawn;
+        private Random rnd = new Random();
+        Vector2 SpaceShipPosition;
+        Vector2 DynamosPosition;
+        Vector2 Velocity;
+        Vector2 Direction;
+
 
 
         float Speed;
         int Level = 1;
-
+        int Score = 0;
+        int Ammo =5;
         enum ShipMovement
         {
             None,
@@ -32,23 +48,27 @@ namespace DefendersGame
         int Movementspeed = 12;
 
         ShipMovement Ship = ShipMovement.None;
-
-        public Form1()
+        
+        
+        public Game()
         {
             InitializeComponent();
 
-
+            SpawnRate();
             pgrHealth.Maximum = 100;
             pgrHealth.Value = 100;
-            SpawnRate();
-
-
+            spawn = false;
+            StartMusic.Play();
             this.panel1.Controls.Add(picSpaceShip);
+            this.panel1.Controls.Add(picDynamos6);
+            this.panel1.Controls.Add(picDynamos3);
+            this.panel1.Controls.Add(picDynamos4);
+            this.panel1.Controls.Add(picDynamos5);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            Image RotateImage = picSpaceShip.Image;
+        
 
 
             if (e.KeyCode == Keys.Up)
@@ -71,13 +91,25 @@ namespace DefendersGame
                 picSpaceShip.Image = Resource1.DefenderShipRight;
                 Face = "Right";
             }
-
-            if (e.KeyCode == Keys.Space)
+            
+            if (e.KeyCode == Keys.Space & Ammo >0)
+            {
                 NewLaser(Face);
+                Ammo -= 1;           
+                LaserSound.Play();
+                AddAmmo();
+              
+            }
             if (e.KeyCode == Keys.Tab)
             {
-                SpawnRate();
+               
+              
+                DynamosNewLaser();
+
+
             }
+           
+
         }
 
         private void StartGame()
@@ -92,48 +124,102 @@ namespace DefendersGame
         private void tmrGame_Tick(object sender, EventArgs e)
         {
             PlayerMovement();
+            
+            
+
+
 
             // Collision check
 
             foreach (Control X in this.panel1.Controls)
             {
-                if (X is PictureBox && X.Tag == "Lander")
+                if (X is PictureBox && ((string)X.Tag == "Lander"||(string)X.Tag == "Swarmer"))
                 {
                     if (pgrHealth.Value <= 0)
                     {
+                        GameOver.Play();
                         tmrGame.Enabled = false;
                     }
                    else if (((PictureBox)X).Bounds.IntersectsWith(picSpaceShip.Bounds))
                     {
+                        // If player gets hit by lander or swarmer they lose health. Enemy gets destroyed.
                         pgrHealth.Value -= 10;
-
+                        Hitpoints += 250;
                         MakeLander();
                         this.panel1.Controls.Remove(X);
+                      
+
                     }
+                    
                    
                 }
 
 
                 foreach (Control k in this.panel1.Controls)
                 {
-                    if ((k is PictureBox && (string)k.Tag == "Laser") && (X is PictureBox && (string)X.Tag == "Lander"))
+                    if ((k is PictureBox && (string)k.Tag == "Laser") && (X is PictureBox && (string)X.Tag == "Lander"|| (string)X.Tag == "Swarmer"))
                     {
                         if (k.Bounds.IntersectsWith(X.Bounds))
                         {
+                            // if Player hits Swarmer or Lander they get points 
+                            Score+=250;
+                            SpawnRate();
+                            lblPoints.Text = "Score: "+ Score.ToString();
                             this.panel1.Controls.Remove(X);
+                            
                             X.Dispose();
-                            MakeLander();
+                            this.panel1.Controls.Remove(k);
+                            k.Dispose();
+                            if (X.Tag == "Lander")
+                                MakeLander();
+                            else if (X.Tag == "Swarmer")
+                                MakeSwamer();
+                    
+                           
                         }
                     }
+                   
+                    
+
                 }
             }
 
 
-            //Move Lander
-            foreach (LanderState landerState in EnemyList)
+        
+
+              
+        
+
+
+                foreach (Control x in this.panel1.Controls)
+            {
+                if (x is PictureBox && (string)x.Tag == "Swarmer")
+                {
+                    if(picSpaceShip.Top>x.Top)
+                    {
+                        x.Top += 2;
+                    }
+                    if(picSpaceShip.Left>x.Left)
+                    {
+                        x.Left += 2;
+                    }
+                    if (picSpaceShip.Top<x.Top)
+                    {
+                        x.Top -= 2;
+                    }
+                    if (picSpaceShip.Left<x.Left)
+                    {
+                        x.Left -= 2;
+                    }
+                }
+
+            }
+
+                    //Move Lander
+                    foreach (LanderState landerState in EnemyList)
             {
                 var x = landerState.LanderImage;
-                if (x is PictureBox && x.Tag == "Lander")
+                if (x is PictureBox && (string)x.Tag == "Lander")
                 {
                     if (x.Top <= 0 || x.Bottom >= panel1.ClientSize.Height)
                     {
@@ -144,13 +230,11 @@ namespace DefendersGame
                         landerState.SetVelocityX(-landerState.Velocity.X);
                     }
 
-                    //MOVE THE BALL
 
-                    //Set ball poostion 
-                    //code to move paddles 
+                      
 
 
-                    landerState.Position = new Vector(x.Left, x.Top) + landerState.Velocity;
+                    landerState.Position = new System.Windows.Vector(x.Left, x.Top) + landerState.Velocity;
 
                     x.Top = (int)landerState.Position.Y;
                     x.Left = (int)landerState.Position.X;
@@ -160,6 +244,7 @@ namespace DefendersGame
 
         private void Form1_KeyUp_1(object sender, KeyEventArgs e)
         {
+            // Stop ship from moving when no keys are pressed
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)
             {
                 Ship = ShipMovement.None;
@@ -206,42 +291,98 @@ namespace DefendersGame
 
         public void NewLaser(string Direction)
         {
+
+            // Create laser and set it off based on direction of player
             Laser FireLaser = new Laser();
             FireLaser.Direction = Direction;
             FireLaser.LaserLeft = picSpaceShip.Left + (picSpaceShip.Width / 2);
             FireLaser.LaserTop = picSpaceShip.Top + (picSpaceShip.Height / 2);
 
             FireLaser.LaserImage = Resource1.Laser;
-            FireLaser.MakeLaser(panel1);
-           
+            FireLaser.MakeLaser(this.panel1);
+       
+          
+          
+
         }
+        public void DynamosNewLaser()
+        {
+
+           double Angle= DynamosAngle();
+            // Create laser and set it off based on direction of player
+            DynamosLaser FireLaser = new DynamosLaser();
+          
+            FireLaser.DynamosLaserLeft = picDynamos3.Left + (picDynamos3.Width / 2);
+            FireLaser.DynamosLaserTop = picDynamos3.Top + (picDynamos3.Height / 2);
+            
+            FireLaser.DynamosLaserImage = Resource1.DynamosLaser;
+            FireLaser.MakedDynamosLaser(panel1);
+             SpaceShipPosition = new Vector2(picSpaceShip.Left + picSpaceShip.Width/2, picSpaceShip.Top+picSpaceShip.Height/2);
+             DynamosPosition = new Vector2(picDynamos3.Left + (picDynamos3.Width / 2), picDynamos3.Top + (picDynamos3.Height / 2));
+           Direction = DynamosPosition-SpaceShipPosition ;
+            FireLaser.Direction = Direction;
+         
+        }
+
+        public Double DynamosAngle()
+        {
+
+
+            double DynamosAngle = Math.Atan(SpaceShipPosition.X - DynamosPosition.X) / (SpaceShipPosition.Y - SpaceShipPosition.X);
+            return DynamosAngle;
+            
+        }
+
 
         public void MakeLander()
         {
+            // Spawn Lander at random location on screen
             Random RandomSpawn = new Random();
             PictureBox Lander = new PictureBox();
             LanderState landerState = new LanderState(Lander);
             EnemyList.Add(landerState);
             Lander.Tag = "Lander";
             Lander.Image = Resource1.Lander;
-            Lander.BorderStyle = BorderStyle.FixedSingle;
+           
             Lander.Size = new System.Drawing.Size(30, 27);
             Lander.SizeMode = PictureBoxSizeMode.StretchImage;
 
             Lander.Left = RandomSpawn.Next(0, panel1.Width - Lander.Width);
-            Lander.Top = RandomSpawn.Next(50, panel1.Height - Lander.Height);
+            Lander.Top = RandomSpawn.Next(0, panel1.Height - Lander.Height);
             this.panel1.Controls.Add(Lander);
             Lander.BringToFront();
 
 
             Speed = 6;
 
-
-            landerState.Position = new Vector(Lander.Width / 2, Lander.Height / 2);
+            landerState.Position = new System.Windows.Vector(Lander.Width / 2, Lander.Height / 2);
             Double Angle = FindRandomAngle();
-            landerState.Velocity = new Vector((double)(Speed * Math.Cos(Angle)), (double)(Speed * Math.Sin(Angle)));
+            landerState.Velocity = new System.Windows.Vector((double)(Speed * Math.Cos(Angle)), (double)(Speed * Math.Sin(Angle)));
         }
 
+        
+        public void MakeSwamer()
+        {
+            // Spawn swarmer at random location on the panel
+             Random RandomSpawn = new Random();
+            PictureBox Swamer = new PictureBox();
+         
+           
+            Swamer.Tag = "Swarmer";
+           Swamer.Image = Resource1.Swamer;
+            
+            Swamer.Size = new System.Drawing.Size(30, 27);
+            Swamer.SizeMode = PictureBoxSizeMode.StretchImage;
+           Swamer.Left = RandomSpawn.Next(0, panel1.Width - Swamer.Width);
+            Swamer.Top = RandomSpawn.Next(0, panel1.Height - Swamer.Height);
+
+            this.panel1.Controls.Add(Swamer);
+        }
+
+
+    
+
+        //Set random angle for the Lander to go off at
         public Double FindRandomAngle()
         {
             Random RandomAngle = new Random();
@@ -257,20 +398,98 @@ namespace DefendersGame
         }
 
 
-        public void SpawnRate()
+        public async Task SpawnRate()
         {
-           // foreach (LanderState i in EnemyList)
+            foreach (LanderState i in EnemyList)
             {
-                //this.panel1.Controls.Remove(i.LanderImage);
+                // this.panel1.Controls.Remove(i.LanderImage);
             }
-
-           // EnemyList.Clear();
-
-            for (int i = 0; i < 3; i++)
+            if (Score ==0)
             {
-                MakeLander();
+                if (spawn == false)
+                spawn = true;
+                Level = 1;
+                spawn = false;
+            }    
+
+            else if (Score == 1250)
+            {
+                spawn = true;
+                Level = 2;
             }
-                
+            else if (Score == 4250)
+            {
+                spawn = true;
+                Level = 3;
+            }
+            else if (Score == 20000)
+            {
+                spawn = true;
+                Level = 4;
+            }
+            else
+            {
+                spawn = false;
+            }
+            if (spawn == true)
+
+            {
+                for (int i = 0; i < Level * 3; i++)
+                {
+                    // 1 seccond delay for spawning of Landers
+                    await Task.Delay(1000);
+                    MakeLander();
+                   
+                }
+
+
+                for (int i = 0; i < Level * 2; i++)
+                {
+                    await Task.Delay(1000);
+                    MakeSwamer();
+                    
+                }
+                spawn = false;
+            }
+           
         }
+
+        public async void AddAmmo()
+        {
+            // 1 second delay for reloading Ammo
+            if (Ammo == 0)
+            {
+                await Task.Delay(500);
+                Ammo = 5;
+
+            }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void tmrBackground_Tick(object sender, EventArgs e)
+        {
+
+            foreach (Control X in this.panel1.Controls)
+            {
+                if (X is PictureBox && (string)X.Tag == "Star")
+                {
+                    Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+
+                    X.BackColor = randomColor;
+                }
+
+            }
+        }
+
+        private void lblHealth_Click(object sender, EventArgs e)
+        {
+
+        }
+
+       
     }
 }

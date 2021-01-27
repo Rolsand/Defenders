@@ -35,6 +35,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +49,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamosLaser.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,6 +66,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StartScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartScreen.Designer.cs">
+      <DependentUpon>StartScreen.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -82,6 +91,10 @@
     <EmbeddedResource Include="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartScreen.resx">
+      <DependentUpon>StartScreen.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -103,10 +116,52 @@
     <None Include="Resources\DefenderShip1.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\SpaceInvadersLaserDepiction.png" />
+    <None Include="Resources\Lander.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Lander.png" />
+    <None Include="Resources\Bomber.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Laser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Swamer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GameOver.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Start.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DefenderStart.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Laser.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HumanCaptured.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StartGameButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StartGameButton %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Instructions.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Human.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dynamd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dynamos.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DynamosLaser.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

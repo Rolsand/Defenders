@@ -1,15 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Forms;
-
+using System.Numerics;
 namespace DefendersGame
 {
     public class LanderState
     {
         public PictureBox LanderImage { get; set; }
         public PictureBox SwarmerImage { get; set; }
-        public Vector Position { get; set; }
-        private Vector mvelocity;
-        public Vector Velocity  
+        public Vector2 Position { get; set; }
+        private Vector2 mvelocity;
+        public Vector2 Velocity  
         
         {
         get {return mvelocity;}
@@ -21,11 +21,11 @@ namespace DefendersGame
             LanderImage = landerImage;
         }
 
-        public void SetVelocityX(double value)
+        public void SetVelocityX(float value)
         {
             mvelocity.X = value;
         }
-        public void SetVelocityY(double value)
+        public void SetVelocityY(float value)
         {
             mvelocity.Y = value;
         }

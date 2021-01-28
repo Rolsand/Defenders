@@ -7,9 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Media;
 
 namespace DefendersGame
 {
+    
     public partial class StartScreen : Form
     {
         private Random rnd = new Random();
@@ -43,6 +45,7 @@ namespace DefendersGame
             this.Visible = false;
             StartGame.ShowDialog();
             this.Visible = true;
+           
         }
 
         private void picDefendergif_Click(object sender, EventArgs e)

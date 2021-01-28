@@ -34,6 +34,8 @@ namespace DefendersGame
             this.tmrGame = new System.Windows.Forms.Timer(this.components);
             this.pgrHealth = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblPause = new System.Windows.Forms.Label();
+            this.picSpaceShip = new System.Windows.Forms.PictureBox();
             this.picDynamos5 = new System.Windows.Forms.PictureBox();
             this.picDynamos4 = new System.Windows.Forms.PictureBox();
             this.picDynamos3 = new System.Windows.Forms.PictureBox();
@@ -61,13 +63,13 @@ namespace DefendersGame
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lblScore = new System.Windows.Forms.Label();
-            this.tmrBackground = new System.Windows.Forms.Timer(this.components);
             this.lblHealth = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblPoints = new System.Windows.Forms.Label();
-            this.picSpaceShip = new System.Windows.Forms.PictureBox();
+            this.tmrSpawn = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSpaceShip)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDynamos5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDynamos4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDynamos3)).BeginInit();
@@ -94,7 +96,6 @@ namespace DefendersGame
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSpaceShip)).BeginInit();
             this.SuspendLayout();
             // 
             // tmrGame
@@ -115,6 +116,7 @@ namespace DefendersGame
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblPause);
             this.panel1.Controls.Add(this.picSpaceShip);
             this.panel1.Controls.Add(this.picDynamos5);
             this.panel1.Controls.Add(this.picDynamos4);
@@ -146,12 +148,36 @@ namespace DefendersGame
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1144, 535);
             this.panel1.TabIndex = 2;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // lblPause
+            // 
+            this.lblPause.AutoSize = true;
+            this.lblPause.Font = new System.Drawing.Font("Impact", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPause.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.lblPause.Location = new System.Drawing.Point(489, 223);
+            this.lblPause.Name = "lblPause";
+            this.lblPause.Size = new System.Drawing.Size(171, 46);
+            this.lblPause.TabIndex = 51;
+            this.lblPause.Text = "[F1] RETURN TO GAME\r\n[F2] RETURN TO LOBBY\r\n";
+            this.lblPause.Visible = false;
+            // 
+            // picSpaceShip
+            // 
+            this.picSpaceShip.BackColor = System.Drawing.Color.Turquoise;
+            this.picSpaceShip.Image = global::DefendersGame.Resource1.DefenderShipRight;
+            this.picSpaceShip.Location = new System.Drawing.Point(915, 337);
+            this.picSpaceShip.Name = "picSpaceShip";
+            this.picSpaceShip.Size = new System.Drawing.Size(38, 38);
+            this.picSpaceShip.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picSpaceShip.TabIndex = 0;
+            this.picSpaceShip.TabStop = false;
+            this.picSpaceShip.Tag = "Player";
+            this.picSpaceShip.UseWaitCursor = true;
             // 
             // picDynamos5
             // 
             this.picDynamos5.Image = ((System.Drawing.Image)(resources.GetObject("picDynamos5.Image")));
-            this.picDynamos5.Location = new System.Drawing.Point(1010, 441);
+            this.picDynamos5.Location = new System.Drawing.Point(1078, 441);
             this.picDynamos5.Name = "picDynamos5";
             this.picDynamos5.Size = new System.Drawing.Size(52, 52);
             this.picDynamos5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -173,18 +199,19 @@ namespace DefendersGame
             // picDynamos3
             // 
             this.picDynamos3.Image = ((System.Drawing.Image)(resources.GetObject("picDynamos3.Image")));
-            this.picDynamos3.Location = new System.Drawing.Point(1010, 33);
+            this.picDynamos3.Location = new System.Drawing.Point(1078, 24);
             this.picDynamos3.Name = "picDynamos3";
             this.picDynamos3.Size = new System.Drawing.Size(52, 52);
             this.picDynamos3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.picDynamos3.TabIndex = 44;
             this.picDynamos3.TabStop = false;
             this.picDynamos3.Tag = "Dynamos";
+            this.picDynamos3.WaitOnLoad = true;
             // 
             // picDynamos6
             // 
             this.picDynamos6.Image = ((System.Drawing.Image)(resources.GetObject("picDynamos6.Image")));
-            this.picDynamos6.Location = new System.Drawing.Point(41, 45);
+            this.picDynamos6.Location = new System.Drawing.Point(41, 24);
             this.picDynamos6.Name = "picDynamos6";
             this.picDynamos6.Size = new System.Drawing.Size(52, 52);
             this.picDynamos6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -421,11 +448,6 @@ namespace DefendersGame
             this.lblScore.TabIndex = 3;
             this.lblScore.Text = "Score";
             // 
-            // tmrBackground
-            // 
-            this.tmrBackground.Enabled = true;
-            this.tmrBackground.Tick += new System.EventHandler(this.tmrBackground_Tick);
-            // 
             // lblHealth
             // 
             this.lblHealth.AutoSize = true;
@@ -436,7 +458,6 @@ namespace DefendersGame
             this.lblHealth.Size = new System.Drawing.Size(72, 26);
             this.lblHealth.TabIndex = 4;
             this.lblHealth.Text = "Health:";
-            this.lblHealth.Click += new System.EventHandler(this.lblHealth_Click);
             // 
             // label1
             // 
@@ -467,19 +488,10 @@ namespace DefendersGame
             this.lblPoints.TabIndex = 7;
             this.lblPoints.Text = "Score:";
             // 
-            // picSpaceShip
+            // tmrSpawn
             // 
-            this.picSpaceShip.BackColor = System.Drawing.Color.Transparent;
-            this.picSpaceShip.Image = global::DefendersGame.Resource1.DefenderShipRight;
-            this.picSpaceShip.Location = new System.Drawing.Point(915, 337);
-            this.picSpaceShip.Name = "picSpaceShip";
-            this.picSpaceShip.Size = new System.Drawing.Size(38, 38);
-            this.picSpaceShip.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picSpaceShip.TabIndex = 0;
-            this.picSpaceShip.TabStop = false;
-            this.picSpaceShip.Tag = "Player";
-            this.picSpaceShip.UseWaitCursor = true;
-            
+            this.tmrSpawn.Enabled = true;
+            this.tmrSpawn.Tick += new System.EventHandler(this.tmrSpawn_Tick);
             // 
             // Game
             // 
@@ -502,6 +514,7 @@ namespace DefendersGame
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp_1);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSpaceShip)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDynamos5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDynamos4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDynamos3)).EndInit();
@@ -528,7 +541,6 @@ namespace DefendersGame
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSpaceShip)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -563,7 +575,6 @@ namespace DefendersGame
         private System.Windows.Forms.PictureBox pictureBox18;
         private System.Windows.Forms.PictureBox pictureBox17;
         private System.Windows.Forms.PictureBox pictureBox16;
-        private System.Windows.Forms.Timer tmrBackground;
         private System.Windows.Forms.Label lblHealth;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -572,6 +583,8 @@ namespace DefendersGame
         private System.Windows.Forms.PictureBox picDynamos5;
         private System.Windows.Forms.PictureBox picDynamos4;
         private System.Windows.Forms.PictureBox picDynamos3;
+        private System.Windows.Forms.Timer tmrSpawn;
+        private System.Windows.Forms.Label lblPause;
     }
 }
 

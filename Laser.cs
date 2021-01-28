@@ -52,7 +52,7 @@ namespace  DefendersGame
             {
                 laser.Left -= LaserSpeed;
             }
-          if (laser.Left<0||laser.Right>ClientSize.Width)
+          if (laser.Left<0||laser.Right>ClientSize.Width )
             {
                
                 LaserTimer.Stop();
